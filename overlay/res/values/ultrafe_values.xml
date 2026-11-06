@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Overrides PPSSPP's "PPSSPP" label for the normal flavor. Change it here to rename the app. -->
+    <string name="app_name">Ultraman Fight Evolution 0</string>
+
+    <color name="ic_launcher_background">#060912</color>
+    <color name="ni_bg">#04060B</color>
+
+    <style name="Theme.Ultrafe" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/ni_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

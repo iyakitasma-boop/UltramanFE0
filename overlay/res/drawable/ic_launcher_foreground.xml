@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Original logo: a glowing colour-timer gem in a silver ring with two red wing marks. Used as
+     the adaptive icon foreground and as the header mark in the launcher screen. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:strokeColor="#D0D8E6"
+        android:strokeWidth="2.6"
+        android:pathData="M54,22 A32,32 0 1,1 54,86 A32,32 0 1,1 54,22 Z" />
+    <path
+        android:strokeColor="#E8283A"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M22,44 L34,54 L22,64 M86,44 L74,54 L86,64" />
+    <path
+        android:fillColor="#38BDF8"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.4"
+        android:strokeLineJoin="round"
+        android:pathData="M54,27 L69,54 L54,81 L39,54 Z" />
+    <path
+        android:fillColor="#DFF5FF"
+        android:pathData="M54,38 L60,54 L54,70 L48,54 Z" />
+</vector>

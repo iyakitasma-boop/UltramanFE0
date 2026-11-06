@@ -1,0 +1,88 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      ppsspp_ref:
+        description: "PPSSPP release tag to build on"
+        required: true
+        default: "v1.20.4"
+      abis:
+        description: "CPU ABIs, comma separated (arm64-v8a covers modern MediaTek phones)"
+        required: true
+        default: "arm64-v8a"
+  push:
+    branches: [main]
+    paths:
+      - "overlay/**"
+      - "scripts/**"
+      - ".github/workflows/build-apk.yml"
+
+env:
+  PPSSPP_REF: ${{ github.event.inputs.ppsspp_ref || 'v1.20.4' }}
+  ABIS: ${{ github.event.inputs.abis || 'arm64-v8a' }}
+  APP_VERSION: "V1"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+
+    steps:
+      - name: Check out this repository
+        uses: actions/checkout@v4
+
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY" || true
+          df -h /
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Clone PPSSPP ${{ env.PPSSPP_REF }}
+        run: |
+          git clone --branch "$PPSSPP_REF" --depth 1 https://github.com/hrydgard/ppsspp.git ppsspp
+          cd ppsspp
+          git submodule update --init --recursive --depth 1 --jobs 8
+
+      - name: Apply Ultraman Fight Evolution 0 overlay
+        run: python3 scripts/apply_overlay.py ppsspp --abis "$ABIS"
+
+      - name: Accept Android SDK licenses and install NDK
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "ndk;29.0.14206865" > /dev/null
+
+      - name: Build release APK
+        working-directory: ppsspp
+        run: |
+          ./gradlew :android:assembleNormalRelease --no-daemon --stacktrace \
+            -PRELEASE_STORE_FILE="$PWD/android/debug.keystore" \
+            -PRELEASE_STORE_PASSWORD=android \
+            -PRELEASE_KEY_ALIAS=androiddebugkey \
+            -PRELEASE_KEY_PASSWORD=android \
+            -PANDROID_VERSION_NAME="$APP_VERSION" \
+            -PANDROID_VERSION_CODE="${{ github.run_number }}"
+
+      - name: Collect APK
+        run: |
+          mkdir -p dist
+          APK=$(find ppsspp/android/build/outputs/apk -name "*.apk" | head -n 1)
+          test -n "$APK" || { echo "No APK produced"; exit 1; }
+          cp "$APK" "dist/UltramanFE0-${APP_VERSION}-${{ github.run_number }}.apk"
+          ls -lh dist
+          # Informational: confirm package id and label
+          AAPT2=$(find "$ANDROID_HOME/build-tools" -name aapt2 | sort | tail -n 1)
+          "$AAPT2" dump badging dist/*.apk | grep -E "^(package|application-label:|launchable-activity)" || true
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: UltramanFE0-apk
+          path: dist/*.apk
+          if-no-files-found: error

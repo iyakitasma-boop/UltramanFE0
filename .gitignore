@@ -1,0 +1,8 @@
+# Cloned and patched by CI only
+/ppsspp/
+/dist/
+*.apk
+*.iso
+*.cso
+.gradle/
+local.properties

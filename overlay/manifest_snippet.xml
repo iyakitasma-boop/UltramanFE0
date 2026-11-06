@@ -1,0 +1,21 @@
+        <!-- Ultraman Fight Evolution 0 launcher (home screen of the app). Inserted by scripts/apply_overlay.py -->
+        <activity
+            android:name="com.ultrafe.launcher.LauncherActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:theme="@style/Theme.Ultrafe">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- Drag-and-drop editor for the on-screen controls. -->
+        <activity
+            android:name="com.ultrafe.launcher.LayoutEditorActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:theme="@style/Theme.Ultrafe" />
